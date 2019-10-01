@@ -3,13 +3,23 @@
 @section('content')
 <div class="container">
     <div class="jumbotron text-center">
-            <div>{{ $product->name }}</div>
-            <div>{{ $product->sku }}</div>
-            <div>{{ $product->status }}</div>
-            <div>{{ $product->base_price }}</div>
-            <div>{{ $product->discount }}</div>
-            <div>{{ $product->description }}</div>
- 
+            <img src="{{URL::asset('public/file/'.$product->image)}}"  height="300" width="300"></td>
+
+            <div>Name: {{ $product->name }}</div>
+            <div>SKU: {{ $product->sku }}</div>
+            @auth
+            <div>Status: {{ $product->status == 1? "enable" : "disable" }}</div>
+            <div>Base price:{{ $product->base_price }}</div>
+            <div>Discount: {{ $product->discount }}</div>
+            @endauth 
+            @if($product->price != $product->special_price)
+            <td>Kaina: <i style = "text-decoration:line-through;"> {{ $product->price }}</i><i> {{ $product->special_price }}<i></td>
+            @else
+            <td>Kaina: {{ $product->price }}</td>
+            @endif
+
+            <div>Description</div>
+            <div><?php echo $product->description?></div>
          
         <div class="placeholder">
             @php $rating = $product->stars; @endphp  
@@ -31,4 +41,9 @@
     @include('review.index')
 
 </div>
+<script>
+    $(document).ready(function() {
+        $('#description').summernote();
+    });
+  </script>
 @endsection

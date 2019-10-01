@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use App\Review;
 use Illuminate\Http\Request;
 use View;
 use Validator;
@@ -10,13 +11,14 @@ use Illuminate\Support\Facades\Redirect;
 use Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
-use Symfony\Component\Console\Input\Input;
 use Config;
+use App\ Summernote;
+
 
 class ProductController extends Controller
 {
 
-    protected $products;
+    protected $products,  $reviews;
 
     /**
      * Create a new controller instance.
@@ -24,9 +26,10 @@ class ProductController extends Controller
      * @param  UserRepository  $users
      * @return void
      */
-    public function __construct(Product $products)
+    public function __construct(Product $products, Review $reviews)
     {
         $this->products = $products;
+        $this->reviews = $reviews;
     }
 
     /**
@@ -56,7 +59,6 @@ class ProductController extends Controller
     public function create()
     {
         return \View::make('product.create');
-
     }
 
     /**
@@ -76,6 +78,8 @@ class ProductController extends Controller
         );
         $validator = Validator::make($request->all(), $rules);
         
+        $this->uploadImage($request);
+
         $request->request->add(['status' =>$request->enable? 1 : 0]);
 
         if ($validator->fails()) {
@@ -130,6 +134,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+      
         $rules = array(
             'name'       => 'required',
             'sku'      => 'required',
@@ -139,7 +144,9 @@ class ProductController extends Controller
         );
         $validator = Validator::make($request->all(), $rules);
 
+        $this->uploadImage($request);
         $request->request->add(['status' =>$request->enable? 1 : 0]);
+        
 
         if ($validator->fails()) {
             return Redirect::back()
@@ -152,6 +159,16 @@ class ProductController extends Controller
         }
     }
 
+    private function uploadImage(Request $request){
+        $profilefile;
+        if ($files = $request->file('file')) {
+            $destinationPath = 'public/file/'; // upload path
+            $profilefile = date('YmdHis') . "." . $files->getClientOriginalExtension();
+            $files->move($destinationPath, $profilefile);
+            $insert['file'] = "$profilefile";
+            $request->request->add(['image' =>$profilefile]);
+         }
+    }
     /**
      * Remove the specified resource from storage.
      *
@@ -176,7 +193,11 @@ class ProductController extends Controller
             return Redirect::back();
         }
         foreach ($list as $id){
-            $this->products->find($id)->delete();
+            $product = $this->products->find($id);
+            $file = 'public/file/' . $product->image;
+            Storage::delete($file);
+            $this->reviews->where('product_id',$id)->delete();
+            $product->delete();
         }
 
         Session::flash('message', 'Products Deleted successfully!');
@@ -193,7 +214,6 @@ class ProductController extends Controller
      */
     public function rate(int $id, int $rate)
     {
-        echo "eorking;";
         $product = $this->products->find($id);
         $stars = ($product->stars * $product->stars_count + $rate)/($product->stars_count+1);
 

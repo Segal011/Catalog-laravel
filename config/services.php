@@ -20,7 +20,7 @@
   array (
     'tax_rate' => '20',
     'tax_flag' => NULL,
-    'discount' => NULL,
+    'discount' => '10',
     'discount_p' => NULL,
   ),
 ) ;

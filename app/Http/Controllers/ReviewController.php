@@ -55,7 +55,8 @@ class ReviewController extends Controller
        $rules = array(
             'name'       => 'required',
             'body'      => 'required',
-            'product_id'      => 'required'
+            'product_id'      => 'required',
+            'email' => 'required|email'
         );
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -68,39 +69,7 @@ class ReviewController extends Controller
         }
         
     }
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Review  $review
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Review $review)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Review  $review
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Review $review)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Review  $review
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Review $review)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.

@@ -26,8 +26,6 @@
         <div class="form-group">
             {{ Form::label('name', 'Name') }}
             {{ Form::text('name') }}
-
-          
            
             {{ Form::label('email', 'E-mail') }}
             {{ Form::text('email') }}
@@ -36,8 +34,7 @@
             {{ Form::text('body') }}
 
             {!! Form::hidden('product_id', $product->id) !!}
-
-        
+            
             {{ Form::submit('Create', array('class' => 'btn btn-primary')) }}
             {{ Form::close() }}
         </div>

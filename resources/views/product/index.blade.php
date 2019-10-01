@@ -4,13 +4,15 @@
 <div class="container">
 
 
-<h1>All the products</h1>
+<h2>PRODUCTS</h2>
+<br>
 
 <!-- will be used to show any messages -->
 @if (Session::has('message'))
     <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
 
+@auth
     {{ Form::open(array('route' => 'configs', 'method' => 'POST')) }}
         <div>
             <i class="form-group">
@@ -43,7 +45,7 @@
     <a class="btn btn-small btn-info" href="{{ URL::to('products/create') }}">Add new product</a>
 
     <button type="submit" name="your_name" value="your_value" class="btn btn-small btn-info">Delete multiple products</button>
-
+@endauth
 
 <table class="table table-striped table-bordered" >
     <thead >
@@ -59,15 +61,20 @@
             <td>Price</td>
             <td style="width:128px;">Review</td>
             <td>Comments</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td colspan="2">Actions</td>
+            @auth
+            <td>Delete</td>
+            @endauth
+
         </tr>
     </thead>
     <tbody >
     @foreach($products as $product)
+        @if (!Auth::check() && $product->status == 1 || Auth::check())
+
         <tr style= > 
-            <td>Image</td>
+            <td>
+            <img src="{{URL::asset('public/file/'.$product->image)}}"  height="100" width="100"></td>
             <td >{{ $product->name }}</td>
             <td>{{ $product->sku }}</td>
             @auth
@@ -76,23 +83,22 @@
             <td>{{ $product->discount }}</td>
             @endauth
             @if($product->price != $product->special_price)
-            <td><p style = "text-decoration:line-through;">{{ $product->price }}</p><p> {{ $product->special_price }}<p></td>
+            <td> <i style = "text-decoration:line-through;"> {{ $product->price }}</i><i> {{ $product->special_price }}<i></td>
             @else
             <td>{{ $product->price }}</td>
             @endif
-            <td> @include('product.stars') ({{$product->stars_count}})</td>            <td>Review ({{count($product->reviews)}})</td>
-            <td>({{count($product->reviews)}})</td>
-
+            <td> @include('product.stars') ({{$product->stars_count}})</td>            
+            <td>Comments ({{count($product->reviews)}})</td>
             <td><a class="btn btn-small btn-success" href="{{ URL::to('products/' . $product->id) }}">Show</a></td>
+            @auth
+
             <td><a class="btn btn-small btn-info" href="{{ URL::to('products/' . $product->id . '/edit') }}">Edit</a></td>
-            <td>  
-                {{ Form::open(array('url' => 'products/' . $product->id, 'class' => 'pull-right')) }}
-                    {{ Form::hidden('_method', 'DELETE') }}
-                    {{ Form::submit('Delete', array('class' => 'btn btn-warning')) }}
-                {{ Form::close() }}
-            </td>
             <td>{{Form::checkbox('list[]',$product->id)}}</td>
+            @endauth
+
         </tr>
+        @endif
+
     @endforeach
     </tbody>
 </table>

@@ -31,17 +31,18 @@
     </div>   
     
     <div class="form-group">
-        {{ Form::label('description', 'Description') }}
-        {{ Form::text('description') }}
+        <textarea name="description" id="description" rows="10" cols="80"></textarea>
+
     </div>
 
     <div class="form-group">
         {{ Form::label('enable', 'Enable') }}
-        <input type="checkbox" value="enable" name="enable">
+        <input type="checkbox" value="enable" name="enable" checked }}>
     </div>
 
+                
     <div class="form-group">
-    {!! Form::file('image', null) !!}
+        <input type="file" name="file" />
     </div>
 
 
@@ -52,6 +53,10 @@
     {{ Form::submit('Create the product!', array('class' => 'btn btn-primary')) }}
 
 {{ Form::close() }}
-
+<script>
+    $(document).ready(function() {
+        $('#description').summernote();
+    });
+  </script>
 </div>
 @endsection

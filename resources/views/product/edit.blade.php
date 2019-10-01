@@ -9,7 +9,7 @@
 <!-- if there are creation errors, they will show here -->
 {{ HTML::ul($errors->all()) }}
 
-{{ Form::model($product, array('route' => array('products.update', $product->id), 'method' => 'PUT')) }}
+{{ Form::model($product, array('route' => array('products.update', $product->id), 'method' => 'PUT', 'enctype' => 'multipart/form-data')) }}
 
     <div class="form-group">
         {{ Form::label('name', 'Name') }}
@@ -32,24 +32,8 @@
     </div>   
     
     <div class="form-group">
-        {{ Form::label('description', 'Description') }}
-        <textarea id="description" name="description"></textarea>
-        <textarea class="description" name="description"></textarea>
-        <script src="{{ asset('node_modules/tinymce/tinymce.js') }}">
-        </script>
-        <script>
-            tinymce.init({
-                selector:'textarea.description',
-                plugins: [
-                        "advlist autolink lists link image charmap print preview anchor",
-                        "searchreplace visualblocks code fullscreen",
-                        "insertdatetime media table contextmenu paste"
-                ],
-                toolbar: 'undo redo | styleselect | bold italic | link | alignleft aligncenter alignright | link image',
+        <textarea name="description" id="description" rows="10" cols="80">{{ $product->description}}</textarea>
 
-               
-            });
-    </script>
     </div>
 
     <div class="form-group">
@@ -57,12 +41,18 @@
         <input type="checkbox" value="enable" name="enable" {{ $product->status == '1' ? 'checked' : '' }}>
     </div>
 
+                
     <div class="form-group">
-    {!! Form::file('image', null) !!}
+        <input type="file" name="file" />
     </div>
     {{ Form::submit('Saves', array('class' => 'btn btn-primary')) }}
 
 {{ Form::close() }}
 
 </div>
+<script>
+    $(document).ready(function() {
+        $('#description').summernote();
+    });
+  </script>
 @endsection
